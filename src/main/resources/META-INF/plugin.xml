@@ -1,0 +1,71 @@
+<idea-plugin>
+    <id>com.github.spring-config-jump</id>
+    <name>Spring Config Jump</name>
+    <version>1.0.0</version>
+    <vendor>jonilchan</vendor>
+
+    <description><![CDATA[
+    <p>Navigate between Spring application configuration properties and their code references.</p>
+    <p>Supports bidirectional navigation:</p>
+    <ul>
+        <li><b>Config → Code</b>: Click gutter icons in <code>application.properties</code> / <code>application.yml</code> to jump to code references
+            (<code>@Value</code>, <code>@ConfigurationProperties</code>, <code>Environment.getProperty()</code>,
+             <code>@ConditionalOnProperty</code>)</li>
+        <li><b>Code → Config</b>: Click gutter icons on Spring annotations to jump to property definitions</li>
+        <li><b>Ctrl+Click</b>: Direct navigation on property keys and annotation values</li>
+    </ul>
+
+    <hr/>
+
+    <p>在 Spring 配置文件属性与代码引用之间进行双向跳转导航。</p>
+    <p>支持双向导航：</p>
+    <ul>
+        <li><b>配置 → 代码</b>：点击 <code>application.properties</code> / <code>application.yml</code> 中的 gutter 图标，跳转到代码引用处
+            （<code>@Value</code>、<code>@ConfigurationProperties</code>、<code>Environment.getProperty()</code>、
+             <code>@ConditionalOnProperty</code>）</li>
+        <li><b>代码 → 配置</b>：点击 Spring 注解上的 gutter 图标，跳转到配置文件中的属性定义</li>
+        <li><b>Ctrl+Click</b>：在属性 key 或注解值上直接点击跳转（macOS 为 Cmd+Click）</li>
+    </ul>
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.modules.java</depends>
+    <depends>org.jetbrains.plugins.yaml</depends>
+    <depends>com.intellij.properties</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- File-based index for property usage lookup -->
+        <fileBasedIndex
+                implementation="com.github.applicationjump.index.SpringPropertyUsageIndex"/>
+
+        <!-- Config -> Code gutter icons -->
+        <codeInsight.lineMarkerProvider
+                language="Properties"
+                implementationClass="com.github.applicationjump.provider.ConfigToCodeLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider
+                language="yaml"
+                implementationClass="com.github.applicationjump.provider.ConfigToCodeLineMarkerProvider"/>
+
+        <!-- Code -> Config gutter icons -->
+        <codeInsight.lineMarkerProvider
+                language="JAVA"
+                implementationClass="com.github.applicationjump.provider.CodeToConfigLineMarkerProvider"/>
+        <codeInsight.lineMarkerProvider
+                language="kotlin"
+                implementationClass="com.github.applicationjump.provider.CodeToConfigLineMarkerProvider"/>
+
+        <!-- Reference contributors for Ctrl+Click -->
+        <psi.referenceContributor
+                language="Properties"
+                implementation="com.github.applicationjump.reference.PropertyReferenceContributor"/>
+        <psi.referenceContributor
+                language="yaml"
+                implementation="com.github.applicationjump.reference.YamlPropertyReferenceContributor"/>
+        <psi.referenceContributor
+                language="JAVA"
+                implementation="com.github.applicationjump.reference.CodePropertyReferenceContributor"/>
+        <psi.referenceContributor
+                language="kotlin"
+                implementation="com.github.applicationjump.reference.CodePropertyReferenceContributor"/>
+    </extensions>
+</idea-plugin>
